@@ -1,0 +1,4 @@
+bonsai:
+  url: ${BONSAI_URL}
+tensorflow_hub:
+  model_url: https://tfhub.dev/google/universal-sentence-encoder/4
