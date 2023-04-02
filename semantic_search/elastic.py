@@ -53,6 +53,17 @@ class BonsaiConfigurator(ElasticSearchConfigurator):
         return client
 
 
+class ElasticCloudConfigurator(ElasticSearchConfigurator):
+    def __init__(self, cloud_id: str, user: str, password: str):
+        self._cloud_id = cloud_id
+        self._user = user
+        self._password = password
+
+    def configure_client(self) -> AsyncElasticsearch:
+        client = AsyncElasticsearch(cloud_id=self._cloud_id, basic_auth=(self._user, self._password))
+        return client
+
+
 class ElasticSearchGateway:
     DEFAULT_INDEX_NAME = 'articles'
 
@@ -104,7 +115,7 @@ class ElasticSearchGateway:
             summary=document['summary'],
             content=document['content'],
             title_embed=document['title_embed'],
-            summary_embed=document['title_summary'],
+            summary_embed=document['title_embed'],
             content_embed=document['content_embed']
         )
         return article
@@ -112,3 +123,7 @@ class ElasticSearchGateway:
 
 def bonsai_elasticsearch(bonsai_url: str, index_name: str = ElasticSearchGateway.DEFAULT_INDEX_NAME):
     return ElasticSearchGateway(BonsaiConfigurator(bonsai_url), index_name=index_name)
+
+
+def elastic_cloud(cloud_id: str,  user: str, password: str, index_name: str = ElasticSearchGateway.DEFAULT_INDEX_NAME):
+    return ElasticSearchGateway(ElasticCloudConfigurator(cloud_id, user, password), index_name=index_name)

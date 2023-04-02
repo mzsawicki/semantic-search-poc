@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
 
+import numpy as np
 import tensorflow as tf
 import tensorflow_hub as hub
 
@@ -32,8 +33,8 @@ class Embedder:
             title=article.title,
             summary=article.summary,
             content=article.content,
-            title_embed=title_embed,
-            summary_embed=summary_embed,
-            content_embed=content_embed
+            title_embed=np.array(title_embed).tolist(),
+            summary_embed=np.array(summary_embed).tolist(),
+            content_embed=np.array(content_embed).tolist()
         )
         return article_with_embeddings

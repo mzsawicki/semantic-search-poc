@@ -1,4 +1,8 @@
 bonsai:
   url: ${BONSAI_URL}
+elastic_cloud:
+  cloud_id: ${CLOUD_ID}
+  user: ${ELASTIC_USER}
+  password: ${ELASTIC_PASSWORD}
 tensorflow_hub:
   model_url: https://tfhub.dev/google/universal-sentence-encoder/4

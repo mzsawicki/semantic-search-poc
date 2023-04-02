@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from typing import List
 
-import tensorflow as tf
+import numpy as np
 
 
 @dataclass(frozen=True, init=True)
@@ -15,6 +16,6 @@ class ArticleWithEmbeddings:
     title: str
     summary: str
     content: str
-    title_embed: tf.Tensor
-    summary_embed: tf.Tensor
-    content_embed: tf.Tensor
+    title_embed: List[float]
+    summary_embed: List[float]
+    content_embed: List[float]
