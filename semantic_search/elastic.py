@@ -27,6 +27,7 @@ class ElasticSearchConfigurator(metaclass=ABCMeta):
 
 
 class BonsaiConfigurator(ElasticSearchConfigurator):
+    """To use Bonsai provider, you need to downgrade elasticsearch package to 7.13"""
     def __init__(self, bonsai_url: str):
         self._url = bonsai_url
 
@@ -94,7 +95,7 @@ class ElasticSearchGateway:
             raise IndexNotAvailable
         response = await self._client.get(index=self._index_name, id=id_)
         article_document = response["_source"]
-        article = await self._document_to_article(article_document)
+        article = self._document_to_article(article_document)
         return article
 
     async def search(self, phrase: str) -> List[ArticleWithEmbeddings]:
@@ -109,7 +110,7 @@ class ElasticSearchGateway:
         await self._client.close()
 
     @staticmethod
-    async def _document_to_article(document: Dict) -> ArticleWithEmbeddings:
+    def _document_to_article(document: Dict) -> ArticleWithEmbeddings:
         article = ArticleWithEmbeddings(
             title=document['title'],
             summary=document['summary'],
