@@ -5,6 +5,7 @@ from typing import List, Dict
 
 from elasticsearch import AsyncElasticsearch
 
+from semantic_search.boost import Boost
 from semantic_search.article import ArticleWithEmbeddings
 
 
@@ -65,8 +66,21 @@ class ElasticCloudConfigurator(ElasticSearchConfigurator):
         return client
 
 
+class ElasticsearchLocalConfigurator(ElasticSearchConfigurator):
+    """For local / docker deployments of Elasticsearch"""
+    def __init__(self, hosts: str, user: str, password: str):
+        self._hosts = hosts.split(',')
+        self._user = user
+        self._password = password
+
+    def configure_client(self) -> AsyncElasticsearch:
+        client = AsyncElasticsearch(hosts=self._hosts, basic_auth=(self._user, self._password))
+        return client
+
+
 class ElasticSearchGateway:
     DEFAULT_INDEX_NAME = 'articles'
+    SEARCH_FUZZINESS = 6    # Levenshtein distance <= 2
 
     def __init__(self, configurator: ElasticSearchConfigurator, index_name: str = DEFAULT_INDEX_NAME):
         self._client = configurator.configure_client()
@@ -128,3 +142,8 @@ def bonsai_elasticsearch(bonsai_url: str, index_name: str = ElasticSearchGateway
 
 def elastic_cloud(cloud_id: str,  user: str, password: str, index_name: str = ElasticSearchGateway.DEFAULT_INDEX_NAME):
     return ElasticSearchGateway(ElasticCloudConfigurator(cloud_id, user, password), index_name=index_name)
+
+
+def elasticsearch_local(hosts_string: str, user: str, password: str,
+                        index_name: str = ElasticSearchGateway.DEFAULT_INDEX_NAME):
+    return ElasticSearchGateway(ElasticsearchLocalConfigurator(hosts_string, user, password), index_name=index_name)

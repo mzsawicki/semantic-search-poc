@@ -4,5 +4,9 @@ elastic_cloud:
   cloud_id: ${CLOUD_ID}
   user: ${ELASTIC_USER}
   password: ${ELASTIC_PASSWORD}
+elasticsearch_local:
+  hosts: ${ELASTIC_HOSTS} # Comma separated host addresses
+  user: ${ELASTIC_USER}
+  password: ${ELASTIC_PASSWORD}
 tensorflow_hub:
   model_url: https://tfhub.dev/google/universal-sentence-encoder/4
