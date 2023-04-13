@@ -112,7 +112,7 @@ class ElasticSearchGateway:
         article = self._document_to_article(article_document)
         return article
 
-    async def search(self, phrase: str) -> List[ArticleWithEmbeddings]:
+    async def search(self, phrase: str) -> List[Dict]:
         if not await self.index_available():
             raise IndexNotAvailable
         query = {
@@ -126,8 +126,17 @@ class ElasticSearchGateway:
                 'fuzziness': self.SEARCH_FUZZINESS
             }
         }
-        response = self._client.search(query=query)
-        pass
+        knn = [
+
+        ]
+        response = await self._client.search(query=query, source_excludes='*embed')
+
+        hits = response.body['hits']['hits']
+        if not hits:
+            return list()
+
+        entries = [hit['_source'] for hit in response.body['hits']['hits']]
+        return entries
 
     async def close(self):
         await self._client.close()
