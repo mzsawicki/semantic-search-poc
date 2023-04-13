@@ -27,7 +27,7 @@ class Embedder:
     def __init__(self, model: TextEmbeddingModel):
         self._model = model
 
-    def embed_article(self, article: Article) -> ArticleWithEmbeddings:
+    async def embed_article(self, article: Article) -> ArticleWithEmbeddings:
         title_embed, summary_embed, content_embed = self._model.embed([article.title, article.summary, article.content])
         article_with_embeddings = ArticleWithEmbeddings(
             title=article.title,

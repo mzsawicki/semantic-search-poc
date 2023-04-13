@@ -1,4 +1,6 @@
 import functools
+from pathlib import Path
+from typing import List
 
 import wikipedia
 
@@ -14,3 +16,10 @@ def fetch_article(title: str) -> Article:
         content=page.content
     )
     return article
+
+
+def scrap_from_titles_file(path: Path) -> List[Article]:
+    with open(path, 'r') as f:
+        titles = f.readlines()
+    articles = [fetch_article(title) for title in titles]
+    return articles

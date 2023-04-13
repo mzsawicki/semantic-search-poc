@@ -5,8 +5,9 @@ elastic_cloud:
   user: ${ELASTIC_USER}
   password: ${ELASTIC_PASSWORD}
 elasticsearch_local:
-  hosts: ${ELASTIC_HOSTS} # Comma separated host addresses
+  hosts: ${ELASTIC_HOSTS}               # Comma separated host addresses
   user: ${ELASTIC_USER}
   password: ${ELASTIC_PASSWORD}
+elasticsearch_integration_type: LOCAL   # Options are: LOCAL / CLOUD / BONSAI
 tensorflow_hub:
   model_url: https://tfhub.dev/google/universal-sentence-encoder/4

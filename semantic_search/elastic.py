@@ -102,26 +102,41 @@ class ElasticSearchGateway:
             raise IndexNotAvailable
         article_document = asdict(article)
         response = await self._client.index(index=self._index_name, body=article_document)
-        return response["_id"]
+        return response['_id']
 
     async def find_article_by_id(self, id_: str) -> ArticleWithEmbeddings:
         if not await self.index_available():
             raise IndexNotAvailable
         response = await self._client.get(index=self._index_name, id=id_)
-        article_document = response["_source"]
+        article_document = response['_source']
         article = self._document_to_article(article_document)
         return article
 
     async def search(self, phrase: str) -> List[ArticleWithEmbeddings]:
         if not await self.index_available():
             raise IndexNotAvailable
-        raise NotImplemented
+        query = {
+            'multi_match': {
+                'query': phrase,
+                'fields': [
+                    f'title^{Boost.title}',
+                    f'summary^{Boost.summary}',
+                    f'content^{Boost.content}'
+                ],
+                'fuzziness': self.SEARCH_FUZZINESS
+            }
+        }
+        response = self._client.search(query=query)
+        pass
+
+    async def close(self):
+        await self._client.close()
 
     async def __aenter__(self):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self._client.close()
+        await self.close()
 
     @staticmethod
     def _document_to_article(document: Dict) -> ArticleWithEmbeddings:

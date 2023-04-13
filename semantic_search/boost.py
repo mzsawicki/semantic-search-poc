@@ -1,9 +1,9 @@
 class Boost:
     NO_BOOST = 1
 
-    title = NO_BOOST
-    summary = NO_BOOST
+    title = 3
+    summary = 2
     content = NO_BOOST
-    title_embed = NO_BOOST
-    summary_embed = NO_BOOST
+    title_embed = 2.5
+    summary_embed = 1.5
     content_embed = NO_BOOST

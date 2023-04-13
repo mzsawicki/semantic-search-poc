@@ -16,7 +16,7 @@ async def test_indexed_article_can_be_found_by_id():
 
         original_title = "Semantic search"
         article = fetch_article(original_title)
-        article_with_embeddings = embedder.embed_article(article)
+        article_with_embeddings = await embedder.embed_article(article)
 
         indexed_article_id = await elasticsearch_.add_article(article_with_embeddings)
         found_article = await elasticsearch_.find_article_by_id(indexed_article_id)
