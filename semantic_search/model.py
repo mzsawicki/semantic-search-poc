@@ -38,3 +38,7 @@ class Embedder:
             content_embed=np.array(content_embed).tolist()
         )
         return article_with_embeddings
+
+    async def embed_phrase(self, phrase: str) -> List[float]:
+        embeddings = self._model.embed([phrase, ])
+        return np.array(embeddings).tolist().pop()

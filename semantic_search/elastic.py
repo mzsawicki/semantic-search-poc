@@ -80,7 +80,9 @@ class ElasticsearchLocalConfigurator(ElasticSearchConfigurator):
 
 class ElasticSearchGateway:
     DEFAULT_INDEX_NAME = 'articles'
-    SEARCH_FUZZINESS = 6    # Levenshtein distance <= 2
+    SEARCH_FUZZINESS = 0    # max 6 for Levenshtein distance <= 2
+    KNN_PARAMETER_K = 5
+    KNN_PARAMETER_NUM_CANDIDATES = 10
 
     def __init__(self, configurator: ElasticSearchConfigurator, index_name: str = DEFAULT_INDEX_NAME):
         self._client = configurator.configure_client()
@@ -112,7 +114,7 @@ class ElasticSearchGateway:
         article = self._document_to_article(article_document)
         return article
 
-    async def search(self, phrase: str) -> List[Dict]:
+    async def search(self, phrase: str, phrase_embed: List[float] = None) -> List[Dict]:
         if not await self.index_available():
             raise IndexNotAvailable
         query = {
@@ -126,10 +128,32 @@ class ElasticSearchGateway:
                 'fuzziness': self.SEARCH_FUZZINESS
             }
         }
-        knn = [
-
-        ]
-        response = await self._client.search(query=query, source_excludes='*embed')
+        knn = None
+        if phrase_embed:
+            knn = [
+                {
+                    'field': 'title_embed',
+                    'query_vector': phrase_embed,
+                    'k': self.KNN_PARAMETER_K,
+                    'num_candidates': self.KNN_PARAMETER_NUM_CANDIDATES,
+                    'boost': Boost.title_embed
+                },
+                {
+                    'field': 'summary_embed',
+                    'query_vector': phrase_embed,
+                    'k': self.KNN_PARAMETER_K,
+                    'num_candidates': self.KNN_PARAMETER_NUM_CANDIDATES,
+                    'boost': Boost.summary_embed
+                },
+                {
+                    'field': 'content_embed',
+                    'query_vector': phrase_embed,
+                    'k': self.KNN_PARAMETER_K,
+                    'num_candidates': self.KNN_PARAMETER_NUM_CANDIDATES,
+                    'boost': Boost.content_embed
+                },
+            ]
+        response = await self._client.search(query=query, knn=knn, source_excludes='*embed')
 
         hits = response.body['hits']['hits']
         if not hits:
@@ -154,7 +178,7 @@ class ElasticSearchGateway:
             summary=document['summary'],
             content=document['content'],
             title_embed=document['title_embed'],
-            summary_embed=document['title_embed'],
+            summary_embed=document['summary_embed'],
             content_embed=document['content_embed']
         )
         return article
