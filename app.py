@@ -1,7 +1,7 @@
 from aiohttp import web
 
 from semantic_search.config import Config
-from semantic_search.elastic import elasticsearch_local, elastic_cloud, bonsai_elasticsearch
+from semantic_search.elastic import elasticsearch_local, elastic_cloud
 from semantic_search.http import reindex, search
 from semantic_search.model import TensorFlowHubModel, Embedder
 
@@ -24,10 +24,6 @@ async def setup_elasticsearch(application):
         user = elasticsearch_config['user']
         password = elasticsearch_config['password']
         elasticsearch_ = elastic_cloud(cloud_id, user, password)
-    elif elasticsearch_integration_type == 'BONSAI':
-        elasticsearch_config = config['bonsai']
-        url = elasticsearch_config['url']
-        elasticsearch_ = bonsai_elasticsearch(url)
     else:
         raise RuntimeError('Invalid elasticsearch_integration_type')
 

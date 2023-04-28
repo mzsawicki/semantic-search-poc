@@ -1,6 +1,5 @@
 from abc import ABCMeta, abstractmethod
 from dataclasses import asdict
-import re
 from typing import List, Dict
 
 from elasticsearch import AsyncElasticsearch
@@ -25,34 +24,6 @@ class ElasticSearchConfigurator(metaclass=ABCMeta):
     @abstractmethod
     def configure_client(self) -> AsyncElasticsearch:
         raise NotImplemented
-
-
-class BonsaiConfigurator(ElasticSearchConfigurator):
-    """To use Bonsai provider, you need to downgrade elasticsearch package to 7.13"""
-    def __init__(self, bonsai_url: str):
-        self._url = bonsai_url
-
-    def configure_client(self) -> AsyncElasticsearch:
-        auth = re.search('https\:\/\/(.*)\@', self._url).group(1).split(':')
-        host = self._url.replace('https://%s:%s@' % (auth[0], auth[1]), '')
-
-        match = re.search('(:\d+)', host)
-        if match:
-            p = match.group(0)
-            host = host.replace(p, '')
-            port = int(p.split(':')[1])
-        else:
-            port = 443
-
-        es_header = [{
-            'host': host,
-            'port': port,
-            'use_ssl': True,
-            'http_auth': (auth[0], auth[1])
-        }]
-
-        client = AsyncElasticsearch(es_header)
-        return client
 
 
 class ElasticCloudConfigurator(ElasticSearchConfigurator):
@@ -182,10 +153,6 @@ class ElasticSearchGateway:
             content_embed=document['content_embed']
         )
         return article
-
-
-def bonsai_elasticsearch(bonsai_url: str, index_name: str = ElasticSearchGateway.DEFAULT_INDEX_NAME):
-    return ElasticSearchGateway(BonsaiConfigurator(bonsai_url), index_name=index_name)
 
 
 def elastic_cloud(cloud_id: str,  user: str, password: str, index_name: str = ElasticSearchGateway.DEFAULT_INDEX_NAME):
