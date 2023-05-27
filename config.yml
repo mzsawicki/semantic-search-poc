@@ -1,5 +1,3 @@
-bonsai:
-  url: ${BONSAI_URL}
 elastic_cloud:
   cloud_id: ${CLOUD_ID}
   user: ${ELASTIC_USER}
