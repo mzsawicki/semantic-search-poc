@@ -1,3 +1,5 @@
+api:
+  port: 8080
 elastic_cloud:
   cloud_id: ${CLOUD_ID}
   user: ${ELASTIC_USER}

@@ -40,6 +40,8 @@ async def setup_text_embedder(application):
 
 
 def run():
+    config = Config()
+    port = config['api']['port']
     application = web.Application()
     application.add_routes([
         web.get('/search', search),
@@ -47,7 +49,7 @@ def run():
     ])
     application.cleanup_ctx.append(setup_elasticsearch)
     application.cleanup_ctx.append(setup_text_embedder)
-    web.run_app(application)
+    web.run_app(application, port=port)
 
 
 if __name__ == '__main__':
