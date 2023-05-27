@@ -25,10 +25,12 @@ async def search(request):
 
 
 async def reindex(request):
+    config = Config()
+
     elastic: ElasticSearchGateway = request.app['elastic']
     embedder: Embedder = request.app['embedder']
 
-    titles_file = Config.TITLES_FILE_PATH
+    titles_file = config['articles']['file']
     articles = scrap_from_titles_file(titles_file)
 
     if await elastic.index_available():

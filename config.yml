@@ -1,5 +1,7 @@
 api:
   port: 8080
+articles:
+  file: feline_diseases.txt
 elastic_cloud:
   cloud_id: ${CLOUD_ID}
   user: ${ELASTIC_USER}
