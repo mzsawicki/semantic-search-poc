@@ -6,9 +6,6 @@ from semantic_search.http import reindex, search
 from semantic_search.model import TensorFlowHubModel, Embedder
 
 
-ARTICLE_TITLES_FILE = 'feline_diseases.txt'
-
-
 async def setup_elasticsearch(application):
     config = Config()
     elasticsearch_integration_type = config['elasticsearch_integration_type']
@@ -44,7 +41,7 @@ def run():
     port = config['api']['port']
     application = web.Application()
     application.add_routes([
-        web.get('/search', search),
+        web.post('/search', search),
         web.post('/reindex', reindex)
     ])
     application.cleanup_ctx.append(setup_elasticsearch)
