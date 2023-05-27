@@ -15,15 +15,15 @@ Install required packages
 ```shell
 pip install -r requirements.txt
 ```
+Then run:
+```shell
+python app.py
+```
 When you run the app first for the first time, or when
 you provide a new list of articles to index, you need to
 request re-indexing:
 ```shell
 curl --location --request POST 'http://0.0.0.0:8080/reindex'
-```
-Then run:
-```shell
-python app.py
 ```
 
 ### API
