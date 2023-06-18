@@ -11,7 +11,7 @@ async def search(request):
     elastic: ElasticSearchGateway = request.app['elastic']
     embedder: Embedder = request.app['embedder']
 
-    request_data = request.json()
+    request_data = await request.json()
     search_query = request_data['query']
     search_query_embedding = await embedder.embed_phrase(search_query)
 
